@@ -301,10 +301,10 @@ defmodule Bamboo.SMTPAdapterTest do
     [{{_from, _to, _raw_email}, gen_smtp_config}] = FakeGenSMTP.fetch_sent_emails()
 
     assert :verify_peer == gen_smtp_config[:tls_options][:verify]
-    assert 'somewhere' == gen_smtp_config[:tls_options][:cacertfile]
-    assert '…' == gen_smtp_config[:tls_options][:cacerts]
+    assert ~c"somewhere" == gen_smtp_config[:tls_options][:cacertfile]
+    assert ~c"…" == gen_smtp_config[:tls_options][:cacerts]
     assert 99 == gen_smtp_config[:tls_options][:depth]
-    assert 'example.com' == gen_smtp_config[:tls_options][:server_name_indication]
+    assert ~c"example.com" == gen_smtp_config[:tls_options][:server_name_indication]
 
     assert {&:ssl_verify_hostname.verify_fun/3, [check_hostname: "example.com"]} ==
              gen_smtp_config[:tls_options][:verify_fun]
@@ -331,10 +331,10 @@ defmodule Bamboo.SMTPAdapterTest do
     [{{_from, _to, _raw_email}, gen_smtp_config}] = FakeGenSMTP.fetch_sent_emails()
 
     assert :verify_peer == gen_smtp_config[:sockopts][:verify]
-    assert 'somewhere' == gen_smtp_config[:sockopts][:cacertfile]
-    assert '…' == gen_smtp_config[:sockopts][:cacerts]
+    assert ~c"somewhere" == gen_smtp_config[:sockopts][:cacertfile]
+    assert ~c"…" == gen_smtp_config[:sockopts][:cacerts]
     assert 99 == gen_smtp_config[:sockopts][:depth]
-    assert 'example.com' == gen_smtp_config[:sockopts][:server_name_indication]
+    assert ~c"example.com" == gen_smtp_config[:sockopts][:server_name_indication]
 
     assert {&:ssl_verify_hostname.verify_fun/3, [check_hostname: "example.com"]} ==
              gen_smtp_config[:sockopts][:verify_fun]
