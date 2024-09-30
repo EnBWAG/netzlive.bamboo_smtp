@@ -1,0 +1,61 @@
+name: Package
+on:
+  release:
+    types:
+      - published
+env:
+  otp: 26.2
+  elixir: 1.16.3
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup elixir
+        uses: EnBWAG/action.setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          elixir-version: ${{ env.elixir }}
+          install-rebar: true
+          install-hex: true
+
+      - name: Build Package
+        run: |
+          mix hex.build
+          mkdir -p upload && mv $(ls -t *.tar | head -n 1) upload
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: ./upload
+          retention-days: 7
+
+  publish:
+    needs: [package]
+    runs-on: ubuntu-latest
+    env:
+      SSH_SERVER: netzlive-hexpm-upload.germanywestcentral.cloudapp.azure.com
+      SSH_COMMAND: 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -l hexpm'
+    steps:
+      - name: Set id_rsa
+        env:
+          NETZLIVE_ID_RSA: ${{ secrets.NETZLIVE_ID_RSA }}
+        run: mkdir ~/.ssh && echo "$NETZLIVE_ID_RSA" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+
+      - name: Download package
+        uses: actions/download-artifact@v4
+        with:
+          name: package
+          path: ./upload
+
+      - name: Ensure package version doesn't exist already (version was increased)
+        run: |
+          export PACKAGES=$(cd upload && ls *.tar -c1)
+          eval "echo \"$PACKAGES\" | xargs -I § $SSH_COMMAND $SSH_SERVER ! ls /config/hexpm/public/tarballs/§"
+
+      - name: Upload and trigger hexpm-rebuild
+        run: |
+          export N_RSYNC_STAGE=(-e "$SSH_COMMAND")
+          rsync -va --rsync-path="/config/rsync_and_build.sh" "${N_RSYNC_STAGE[@]}" ./upload/*.tar $SSH_SERVER:/config/hexpm/public/tarballs/
