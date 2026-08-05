@@ -8,7 +8,6 @@ defmodule BambooSmtp.Mixfile do
     [
       app: :bamboo_smtp,
       version: @version,
-      elixir: "~> 1.7",
       source_url: @project_url,
       homepage_url: @project_url,
       name: "Bamboo SMTP Adapter",
@@ -32,23 +31,16 @@ defmodule BambooSmtp.Mixfile do
       {:bamboo, "~> 2.3.1"},
       {:gen_smtp, "~> 1.2.0"},
 
-      # dev / test
-      {:credo, "~> 1.7.8", only: [:dev, :test]},
-      {:excoveralls, "~> 0.14.0", only: :test},
-
       # doc
       {:earmark, ">= 1.3.2", only: :docs},
-      {:ex_doc, ex_doc_version(), only: :docs},
-      {:inch_ex, "~> 2.0.0", only: :docs}
-    ]
-  end
+      {:inch_ex, "~> 2.0.0", only: :docs},
 
-  defp ex_doc_version do
-    if Version.match?(System.version(), "~> 1.7") do
-      "~> 0.24.0"
-    else
-      "~> 0.18.4"
-    end
+      # dev & test
+      {:credo, "~> 1.7.8", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, ">= 0.40.0 and < 2.0.0", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.14.0", only: :test}
+    ]
   end
 
   defp package do
