@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [Unreleased]
+
+- (US 4782299) DEV - Erlang 29 / Elixir 1.20 Upgrades
+
 ## 4.2.2
 
 - Use punycode for unicode characters in domain name to fix encoding errors ([#198])
