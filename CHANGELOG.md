@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## [Unreleased]
+## 4.2.3
 
-- (US 4782299) DEV - Erlang 29 / Elixir 1.20 Upgrades
+- Fixes warning with elixir v1.20
 
 ## 4.2.2
 
