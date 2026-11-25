@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.2.3
+
+- Fixes warning with elixir v1.20
+
 ## 4.2.2
 
 - Use punycode for unicode characters in domain name to fix encoding errors ([#198])
